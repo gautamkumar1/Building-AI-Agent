@@ -1,0 +1,19 @@
+{
+  "name": "simple-chat-app",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node --env-file=.env index.js"
+  },
+  "type": "module",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "openai": "^4.85.2",
+    "readline-sync": "^1.4.10",
+    "tiktoken": "^1.0.20"
+  }
+}

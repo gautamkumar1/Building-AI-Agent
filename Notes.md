@@ -1,0 +1,461 @@
+## Build AI Projects with Node.js, OpenAI, LangChain, Vector DBs, HuggingFace and TypeScript
+
+## 1. OpenAI Fundamentals
+
+### 1.1 OpenAI Setup, Create api key and run first prompt
+
+- docs: https://platform.openai.com/docs/quickstart
+- OpenAI API Key
+  - https://openai.com/index/openai-api/
+  - https://platform.openai.com/
+- Create a node/npm project
+  - `npm init -y`
+  - `npm install openai`
+- run a prompt
+- Note: `--env-file=.env` is used to load the environment variables from the .env file
+
+### 1.2 Typescript setup
+
+- `npm i -D typescript ts-node @types/node`
+- `npx tsc --init`
+
+### 1.3 OpenAI and Open Source Models ex HuggingFace
+
+- What is a model?
+  - A model is a machine learning system that generates predictions based on data. It is the core of the OpenAI API.
+  - The OpenAI API provides a range of models that can be used to generate text, images, and more.
+- Large language models are the most popular type of model. They can generate human-like text based on a prompt.
+- OpenAI Models
+  - https://platform.openai.com/docs/models
+  - GPT-4o
+    - CONTEXT WINDOW: A context window is a window of text that the model uses to generate predictions. The context window size is the number of tokens in the window.
+    - training data date: date till which the model was trained
+    - price: cost per token
+    - https://platform.openai.com/docs/models/gpt-4o
+  - GPT-4 turbo
+  - GPT-3.5 Turbo
+  - DALL·E
+  - Whisper
+- open source models
+  - HuggingFace: https://huggingface.co/
+  - https://huggingface.co/models
+
+### 1.5 Tokens:
+
+- https://platform.openai.com/tokenizer
+- Tokens are the smallest unit of text that the model can generate. The model generates text by predicting the next token in a sequence of tokens.
+- Tokens can be words, punctuation, or other characters.
+- The model generates tokens based on the context window, which is a window of text that the model uses to generate predictions.
+- The context window size is the number of tokens in the window.
+- Learn more about tokenization: https://huggingface.co/learn/nlp-course/en/chapter6/1?fw=pt
+- the pricing depends on tokens:
+  - https://openai.com/api/pricing/
+- see usage at: https://platform.openai.com/usage
+- how to check tokens in playground:
+  you can go to the playground at: https://platform.openai.com/playground/chat?models=gpt-4o
+- to check tokens in nodejs project:
+  - https://github.com/dqbd/tiktoken
+  - `npm i tiktoken`
+
+### 1.7 Roles
+
+- System
+- User
+- Assistant
+
+### 1.8 OpenAI API and playground parameters
+
+- Temperature
+  - The temperature parameter controls the randomness of the model's predictions. A higher temperature will result in more random predictions, while a lower temperature will result in more predictable predictions.
+  - recommended range: 0.1 to 1.0
+- Top P:
+  - The top_p parameter controls the diversity of the model's predictions. A higher top_p will result in more diverse predictions, while a lower top_p will result in more focused predictions.
+  - ex: the top_p parameter is set to 0.9, the model will only consider the top 90% of tokens with the highest probabilities when generating predictions.
+  - recommended range: 0.1 to 0.9
+- Maximum tokens
+  - The max_tokens parameter controls the maximum number of tokens that the model will generate in a single response. If the model reaches the maximum number of tokens, it will stop generating text.
+  - recommended range: 16 to 2048
+- Frequency penalty:
+  - The frequency_penalty parameter controls the model's tendency to repeat tokens that have already been generated. A higher frequency_penalty will result in less repetition, while a lower frequency_penalty will result in more repetition.
+  - recommended range: 0.1 to 2.0
+- n:
+  - number of choices: the number of completions to generate. default: 1
+- seed: 88888
+  - If specified, our system will make a best effort to sample deterministically, such that repeated requests with the same seed and parameters should return the same result. Determinism is not guaranteed, and you should refer to the system_fingerprint response parameter to monitor changes in the backend.
+
+## 2 Simple Chat Project
+
+- Features:
+  - Chat with OpenAI
+  - Add chat history (context)
+  - Set token limit
+
+### 2.1 Setup new chat-app project
+
+- `npm init -y`
+- `npm i -D typescript ts-node @types/node`
+- `npx tsc --init`
+- `npm i openai tiktoken`
+
+### 2.2 Build the Chat with OpenAI
+
+- we will use the console as the chat interface
+  - use `process.stdin.addListener`
+
+### 2.3 Add chat history (context)
+
+- you can build this by simply pushing the user and assistant messages to an array and then using that array as the context for the next message
+
+### 2.4 Set token limit
+
+- Why keep context small?
+  - to control the cost
+  - to avoid any errors due to large context since gpt-3.5-turbo has a limit of 16,385
+
+## 3 OpenAI Function calling or Tools
+
+### 3.1 Introduction
+
+- https://platform.openai.com/docs/guides/function-calling
+- Why function calling?
+  - Chatgpt only has access to the trained data set ex: for gpt 3 the training data is till 2021
+  - to get the latest data we can use function calling
+    - ex: what is the latest price of bitcoin or what is the date today?
+    - to solve this we can use function calling. So the openai model can be prompted to call a function to get the latest data
+- so we can do
+  - access the latest data or real time data
+  - modify/mutation of data ex: in a DB
+  - act like a live chat bot which can interact with the user in real time
+
+Topics to cover:
+
+- setup function calling
+- parameters of the function
+- multiple functions
+- project for demo
+
+### 3.2 Setup function calling
+
+- Configure the function calling
+- Decide which function to call
+- Call the function
+- call openAI with the function response
+
+### 3.3 Function calling parameters
+
+### 3.4 Project (Train Reservation System Assistant)
+
+- Product Requirement:
+
+  - User should be able to ask for trains between two stations
+    - ex: "what are the trains between Mumbai and Delhi?"
+  - Agent should respond with the train details
+    - ex: "There are two trains: Rajdhani and Shatabdi"
+  - User should be able to ask for making a reservation
+    - ex: "I want to book a ticket for Rajdhani"
+  - Agent should respond with the reservation details
+    - ex: "Your ticket is booked for Rajdhani. PNR is 123456"
+
+- Tech features to implement:
+  - Function calling
+    - getTrainsBetweenStations(source, destination)
+    - bookTicket(trainName, date)
+  - Context
+
+## 4. Embedding and Similarity
+
+- Concepts
+  - what are embeddings?
+  - what are openai embeddings?
+  - What is similarity?
+  - Project: Recommendation system
+
+### 4.1 Embeddings
+
+- Embeddings are numerical representations of data ex: text, images, audio etc.
+- Text embeddings are numerical representations of text data
+- Embeddings take the form of a vector ie a list of numbers
+- Embedding latent space: the space in which the items are placed close to each other if they are similar and far if they are dissimilar
+
+- Similarity
+
+  - Similarity is a measure of how similar two items are
+  - Dot product: a mathematical operation that gives a measure of similarity between two vectors ex: refer the image dot-product-similarity.png
+  - Cosine similarity: a measure of similarity between two non-zero vectors of an inner product space that measures the cosine of the angle between them
+
+- Embedding Models:
+- https://platform.openai.com/docs/guides/embeddings/embedding-models
+  - OpenAI has a range of embedding models that can be used to generate embeddings for text data
+  - openai embedding models ex:
+    - text-embedding-3-small (higher PAGES PER DOLLAR hence cheaper)
+    - text-embedding-3-large
+    - text-embedding-ada-002
+- text ---> embedding model ---> embeddings
+  - ex: "hello world" ---> text-embedding-3-small ---> [0.1, 0.2, 0.3, ...]
+- why we need to create embeddings?
+  - to compare the similarity between two texts
+  - to implement recommendation systems
+- read more about embeddings: https://openai.com/index/new-embedding-models-and-api-updates/
+- open ai can have up to 3072 embedding dimensions
+- hugging face leader board: https://huggingface.co/spaces/mteb/leaderboard
+  - can use this to compare the embeddings dimeansion
+
+### 4.2 OpenAI Embeddings
+
+- `openai.embeddings.create`
+
+### 4.3 Gnerate multiple embeddings and save embeddings json file
+
+### 4.4 Calculate similarity between embeddings
+
+### 4.5 Project: Recommendation system
+
+- Product Requirement:
+  - User should be able to ask for recommendations based on a given text
+    - ex: "I like french food"
+  - Agent should respond with the recommendations of dishes
+    - ex: "You may like croissants, baguettes, and macarons"
+- for prod level project use dataset like: https://www.kaggle.com/datasets?search=food
+
+## 5 Vector Databases - Pinecone and ChromaDB
+
+### 5.1 Intro the section
+
+- What vector DB is and why do we need them in a production setup
+- We will learn about
+
+  - ChromaDB - open source vector DB, run locally on our machine
+    - https://www.trychroma.com/
+    - python and Docker installation
+  - PineCone:
+    - managed vector DB,
+    - this is going to need registration of our account
+
+- Project: "FAQ Chatbot"
+  - store the data into a vector DB
+    - before storing makes sure to break the data into chunks
+  - Ask a question
+  - query the DB for the most relevant data with higher similarity
+    - it will find the most relevant chunk of data
+  - in the end, use the most relevant data and OpenAI API
+
+### 5.2 What is Vector DB and why vector DB?
+
+- Why do we need vector DB and what was the problem with traditional DB?
+  - Traditional DBs are not good for similarity search
+  - Vector DBs are optimized for similarity search
+  - ex: for recommendation systems, chatbots, search engines etc
+- We need vector DB for better data processing and retrieval
+- Poular vector DBs:
+
+  - Pinecone
+  - Chroma
+  - Redis
+  - PostgreSQL - with the help of plugins like: PG Vector extension
+  - Milvus: https://milvus.io/
+  - Weaviate: https://weaviate.io/
+  - Annoy: https://github.com/spotify/annoy
+
+- What are vector databases?
+  - Vector databases are databases that store and query vector data
+  - Vector data is data that can be represented as a vector, which is a list of numbers
+  - Vector databases are optimized for similarity search, which is the process of finding items that are similar to a given item
+  - Vector databases are used in a wide range of applications, including recommendation systems, search engines, and natural language processing
+- How vector databases are different from traditional databases?
+
+  - Storage:
+    - Traditional databases are optimized for storing and querying structured data, such as text, numbers, and dates
+    - Vector databases are optimized for storing and querying vector data, which is a list of numbers that represents an item. vector dbs holds data + the embeddings of the data
+  - Query:
+    - Vector databases use specialized algorithms and data structures to efficiently search for items that are similar to a given item ex: cosine similarity and dot product similarity. vecotr db uses embeddings as query parameters
+    - while traditional databases use SQL to query based on values match
+  - Algorithms:
+    - Vector databases use algorithms such as nearest neighbor search to find items that are similar to a given item
+    - Traditional databases use algorithms such as B-trees and hash tables to search for items based on their values
+
+- ![Vector DB System Design](./assets/vector-db-system-design.png)
+
+### 5.3 ChromaDB set up on machine
+
+- ChromaDB is an open-source vector database that is optimized for similarity search
+- it is written in python
+- requirement: python and docker
+  - install docker from : https://www.docker.com/products/docker-desktop/
+  - install docker vscode extension (optional)
+- docs: https://www.trychroma.com/
+- https://github.com/chroma-core/chroma
+
+- check docker: `docker --version`
+- let's deploy a chroma docker image:
+  - https://docs.trychroma.com/deployment/aws#docker
+  - `docker pull chromadb/chroma`
+  - `docker run -p 8000:8000 chromadb/chroma`
+  - once running you can test the heartbeat at: http://0.0.0.0:8000/api/v1
+
+### 5.4 ChromaDB client setup in chat-app
+
+- `npm i chromadb`
+- you can check list of collections at: http://0.0.0.0:8000/api/v1/collections
+- list of APIs: http://0.0.0.0:8000/docs
+
+### 5.5 using open AI embeddings and storing in ChromaDB with embedding function
+
+- Read more about chromadb embed integration: https://docs.trychroma.com/integrations#%F0%9F%A7%AC-embedding-integrations
+
+- open ai model integration: https://docs.trychroma.com/integrations/openai
+
+### 5.5 Embedding Query
+
+- we will learn how to query based on embeddings using similarity search
+- query will return must relevant results based on the similarity
+- context injection: we will provide openai with context for a query
+
+### 5.6 Project: FAQ Chatbot
+
+### 5.7 Pinecone VectorDB
+
+- https://www.pinecone.io/
+- managed vector DB
+  - no need to manage the infrastructure
+  - easy to use
+- it supports meta data as well
+  - so you can store the embeddings and the meta data
+
+### 5.8 Create PineCone index
+
+- we can create the index using web or through code
+- we will use the code to create the index
+
+### 5.9 Pinecone index operations
+
+- we will run some operations on the pinecone index
+  - create index (5.8)
+  - list indexes
+  - get index
+  - describe index
+  - create collection
+  - upsert
+  - query
+
+### 6.0 Project: FAQ Chatbot with Pinecone
+
+## 7 LangChain
+
+- LangChain is a framework for building AI-powered applications using LLMs
+- Super popular in the AI community especially python and javascript community
+- We will cover
+  - what is LangChain
+  - build some apps
+  - integrate with vector DB ex: ChromaDB
+
+### 7.1 What is LangChain
+
+- https://github.com/langchain-ai/langchain
+- https://www.langchain.com/
+- LangChain is a framework for developing applications powered by large language models (LLMs).
+- Langchain libraries:
+  - https://github.com/langchain-ai/langchain#open-source-libraries
+  - langchain: Chains, agents, and retrieval strategies that make up an application's cognitive architecture.
+- Langchain framework illustration:
+  - ![LangChain Framework](./assets/langchain-framework.png)
+- Langchain LLM Flow with an agent
+  - ![LangChain LLM Flow with an agent](./assets/langchain-llm-flow.png)
+- js library: https://github.com/langchain-ai/langchainjs
+- https://js.langchain.com/v0.2/docs/introduction/
+
+### 7.2 LangChain setup, invoke, batch and stream
+
+- `npm i langchain`
+- https://blog.langchain.dev/js-envs/
+- let's create a project and understand how to use langchain to invoke, batch and how to stream
+
+### 7.3 LangChain PromptTemplates to work with more complex prompts
+
+- ChatPromptTemplate.fromTemplate
+  - typesafe
+- ChatPromptTemplate.fromMessage
+  - not typesafe
+
+### 7.4 LangChain output parsing
+
+- current output is not in a readable format
+- langchain provides a way to parse the output
+- three ways
+  - StringOutputParser
+  - CommaSeparatedListOutputParser
+
+### 7.5 RAG Application
+
+- Retrieval Augmented Generation
+  - it is the process of optimizing the output of a LLM, by using resources outside of it's training data.
+  - ex: RAG application for a company to answer their FAQs
+- RAG Illustration:
+  - ![RAG Illustration](./assets/rag.png)
+- RAG System design:
+  - ![RAG System Design](./assets/rag-system-design.png)
+
+### 7.6 Beginner RAG Application
+
+- hardcoded data
+
+### 7.7 RAG Application - Data sources from web using Web Loaders ex: Cheerio
+
+- https://js.langchain.com/v0.1/docs/integrations/document_loaders/web_loaders/web_cheerio/
+- better or advanced web loaders alternative:
+  - puppeteer
+  - playwright
+- https://www.npmjs.com/package/@langchain/community
+- https://js.langchain.com/v0.2/docs/concepts/#text-splitters
+- https://js.langchain.com/v0.2/docs/how_to/recursive_text_splitter
+
+### 7.8 RAG Application - Data sources from PDF data
+
+- https://js.langchain.com/v0.1/docs/integrations/document_loaders/file_loaders/pdf/
+
+### 7.9 RAG App - ChromaDB integration
+
+- till now we used in memory DB. Now let's use ChromaDB
+
+## 8 Hugging Face
+
+- why Hugging face
+  - if you are looking for an open source or cheaper or non open AI models
+  - if you are looking for a self hosted model
+  - you don't want to use openAI for security reasons
+  - relying on 3rd party is not an option
+  - hugging face also have better models in some scenarios
+  - if you want local or offline solutions
+- How to use Hugging face
+  - run api
+  - run locally
+
+### 8.1 What is Hugging Face
+
+- https://huggingface.co/
+- https://huggingface.co/models
+- https://huggingface.co/datasets
+- https://huggingface.co/spaces
+  - community apps
+  - ex: https://huggingface.co/spaces/mteb/leaderboard
+- https://huggingface.co/pricing
+
+### 8.2 Hugging Face setup with API to access models
+
+- https://huggingface.co/docs/huggingface.js/en/index
+- `npm install @huggingface/inference`
+- to generate embeddings use models from the "feature extraction" section/category
+  - https://huggingface.co/models?pipeline_tag=feature-extraction&sort=trending
+
+### 8.3 Hugging Face Translation Models
+
+- https://huggingface.co/models?pipeline_tag=translation&sort=downloads
+- you can use the web inference API to compute a models output and then if you are happy you can use it in your code
+- https://huggingface.co/docs/huggingface.js/main/en/inference/README#translation
+
+### 8.4 Hugging Face Image generation
+
+### 8.5 How to run Hugging Face locally
+
+- https://huggingface.co/docs/transformers.js/index
+- Transformers.js uses ONNX Runtime to run models in the browser.
+  - make sure your model supports it
