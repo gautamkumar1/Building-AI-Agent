@@ -1,0 +1,19 @@
+{
+  "name": "chromadb",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node --env-file=.env index.js"
+  },
+  "type": "module",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "chroma-js": "^3.1.2",
+    "chromadb": "^1.10.4",
+    "openai": "^4.85.4"
+  }
+}
