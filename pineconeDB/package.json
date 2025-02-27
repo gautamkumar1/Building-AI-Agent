@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node --env-file=.env index.js"
+    "start": "node --env-file=.env faq-chatbot.js"
   },
   "type": "module",
   "keywords": [],
@@ -12,6 +12,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@pinecone-database/pinecone": "^5.0.2"
+    "@pinecone-database/pinecone": "^5.0.2",
+    "openai": "^4.85.4"
   }
 }
